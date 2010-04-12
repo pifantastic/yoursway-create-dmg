@@ -57,9 +57,9 @@ while test "${1:0:1}" = "-"; do
     --volname)
       VOLUME_NAME="$2"
       shift; shift;;
-      --password)
-        PASSWORD="$2"
-        shift; shift;;
+    --password)
+      PASSWORD="$2"
+      shift; shift;;
     --background)
       BACKGROUND_FILE="$2"
       BACKGROUND_FILE_NAME="$(basename $BACKGROUND_FILE)"
