@@ -27,6 +27,8 @@ function usage() {
   echo "Options:"
   echo "  --volname name"
   echo "      set volume name (displayed in the Finder sidebar and window title)"
+  echo "  --password password"
+  echo "      set dmg password"
   echo "  --background pic.png"
   echo "      set folder background image (provide png, gif, jpg)"
   echo "  --window-pos x y"
@@ -55,6 +57,9 @@ while test "${1:0:1}" = "-"; do
     --volname)
       VOLUME_NAME="$2"
       shift; shift;;
+      --password)
+        PASSWORD="$2"
+        shift; shift;;
     --background)
       BACKGROUND_FILE="$2"
       BACKGROUND_FILE_NAME="$(basename $BACKGROUND_FILE)"
@@ -154,7 +159,13 @@ hdiutil detach "${DEV_NAME}"
 
 # compress image
 echo "Compressing disk image..."
-hdiutil convert "${DMG_TEMP_NAME}" -format UDZO -imagekey zlib-level=9 -o "${DMG_DIR}/${DMG_NAME}"
+
+if ! test -z "$PASSWORD"; then
+    echo -n "${PASSWORD}" | hdiutil convert "${DMG_TEMP_NAME}" -encryption AES-128 -stdinpass -format UDZO -imagekey zlib-level=9 -o "${DMG_DIR}/${DMG_NAME}" 
+else
+    hdiutil convert "${DMG_TEMP_NAME}" -format UDZO -imagekey zlib-level=9 -o "${DMG_DIR}/${DMG_NAME}"
+fi
+
 rm -f "${DMG_TEMP_NAME}"
 
 # adding EULA resources
